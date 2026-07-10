@@ -12,6 +12,9 @@
     "license": "AGPL-3",
     "development_status": "Alpha",
     "depends": ["stock_request", "base_tier_validation"],
-    "data": ["views/stock_request_views.xml"],
+    "data": [
+        "views/stock_request_views.xml",
+        "views/stock_request_order_views.xml",
+    ],
     "installable": True,
 }

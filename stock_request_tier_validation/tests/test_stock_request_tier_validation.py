@@ -27,6 +27,16 @@ class TestStockRequestTierValidation(BaseCommon):
                 "model_id": cls.env.ref("stock_request.model_stock_request").id,
                 "review_type": "individual",
                 "reviewer_id": cls.test_user.id,
+                "definition_domain": (
+                    "[('state', '=', 'draft'), ('order_id', '=', False)]"
+                ),
+            }
+        )
+        cls.env["tier.definition"].create(
+            {
+                "model_id": cls.env.ref("stock_request.model_stock_request_order").id,
+                "review_type": "individual",
+                "reviewer_id": cls.test_user.id,
                 "definition_domain": "[('state', '=', 'draft')]",
             }
         )
@@ -98,3 +108,44 @@ class TestStockRequestTierValidation(BaseCommon):
         request.action_confirm()
         self.assertEqual(request.state, "open")
         self.assertEqual(request.validation_status, "validated")
+
+    def test_tier_validation_order(self):
+        order = self.env["stock.request.order"].create(
+            {
+                "company_id": self.company.id,
+                "warehouse_id": self.warehouse.id,
+                "location_id": self.warehouse.lot_stock_id.id,
+                "expected_date": fields.Datetime.now(),
+                "stock_request_ids": [
+                    Command.create(
+                        {
+                            "product_id": self.product.id,
+                            "product_uom_id": self.product.uom_id.id,
+                            "product_uom_qty": 5.0,
+                            "company_id": self.company.id,
+                            "warehouse_id": self.warehouse.id,
+                            "location_id": self.warehouse.lot_stock_id.id,
+                            "expected_date": fields.Datetime.now(),
+                        }
+                    )
+                ],
+            }
+        )
+        msg_error_received = (
+            r"(?s)This action needs to be validated for at least one record\..*"
+            r"Please request a validation\."
+        )
+        with self.assertRaisesRegex(ValidationError, msg_error_received):
+            order.action_confirm()
+        order.request_validation()
+        order.invalidate_model()
+        msg_error_open = (
+            r"(?s)A validation process is still open for at least one record\."
+        )
+        with self.assertRaisesRegex(ValidationError, msg_error_open):
+            order.action_confirm()
+        order.with_user(self.test_user).validate_tier()
+        order.invalidate_model()
+        order.action_confirm()
+        self.assertEqual(order.state, "open")
+        self.assertEqual(order.validation_status, "validated")

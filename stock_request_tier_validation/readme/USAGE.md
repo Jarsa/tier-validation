@@ -1,6 +1,7 @@
 To use this module, you need to:
 
-1.  Create a Stock Request triggering at least one "Tier Definition".
+1.  Create a Stock Request or a Stock Request Order triggering at least
+    one "Tier Definition".
 2.  Click on *Request Validation* button.
 3.  Under the tab *Reviews* have a look to pending reviews and their
     statuses.
@@ -8,8 +9,9 @@ To use this module, you need to:
 
 Additional features:
 
-- You can filter the Stock Requests requesting your review through the
-  filter *Needs my Review*.
-- User with rights to validate the Stock Request (validate all tiers
-  that would be generated) can directly do the operation, this is,
-  there is no need for her/him to request a validation.
+- You can filter the Stock Requests and Stock Request Orders requesting
+  your review through the filter *Needs my Review*.
+- User with rights to validate the Stock Request or Stock Request Order
+  (validate all tiers that would be generated) can directly do the
+  operation, this is, there is no need for her/him to request a
+  validation.
