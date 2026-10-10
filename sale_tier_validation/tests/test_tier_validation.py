@@ -10,6 +10,10 @@ from odoo.addons.base.tests.common import BaseCommon
 
 @tagged("post_install", "-at_install")
 class TestSaleTierValidation(BaseCommon):
+    # Tests run as this user (BaseCommon >= 20.0): it confirms orders and
+    # toggles the company-level print block setting.
+    _test_user_groups = ("base.group_system", "sales_team.group_sale_manager")
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
